@@ -10,7 +10,7 @@ if (empty($return_url)) {
 if (isset($_GET['addCart']) && isset($_GET["return_url"])) {
     $Aid_barang = $_GET['addCart'];
     $id_user = $_SESSION['id_login'];
-    $ambil = $koneksi->query("SELECT * FROM tbl_barang WHERE id_barang='" . $Aid_barang . "'") or die("Last error: {$koneksi->error}\n");
+    $ambil = $koneksi->query("SELECT * FROM tbl_barang WHERE id_barang='" . $Aid_barang . "' AND stok_barang>'0'") or die("Last error: {$koneksi->error}\n");
     $rowcount = mysqli_num_rows($ambil);
 
     if ($rowcount > 0) {

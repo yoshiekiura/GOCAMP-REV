@@ -16,7 +16,9 @@ include('./session.php');
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Ekko Lightbox -->
-  <link rel="stylesheet" href="./pages/plugins/ekko-lightbox/ekko-lightbox.css">
+  <link rel="stylesheet" href="./plugins/ekko-lightbox/ekko-lightbox.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="./plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="./dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
@@ -164,30 +166,34 @@ include('./session.php');
             ?>
             <div class="card-body">
               <div class="form-group">
+                <label for="ID Barang">ID Barang</label>
+                <input type="text" id="idbarang" class="form-control" value="<?php echo $pecah['id_barang'] ?>" disabled>
+              </div>
+              <div class="form-group">
                 <label for="inputName">Nama Barang</label>
-                <input type="text" id="inputName" class="form-control" value="<?php echo $pecah['nama_barang'] ?>">
+                <input type="text" id="namabarang" class="form-control" value="<?php echo $pecah['nama_barang'] ?>">
               </div>
               <div class="form-group">
                 <label for="inputDescription">Deskripsi Barang</label>
-                <textarea id="inputDescription" class="form-control" rows="4"><?php echo $pecah['deskripsi_barang'] ?></textarea>
+                <textarea id="deskripsibarang" class="form-control" rows="4"><?php echo $pecah['deskripsi_barang'] ?></textarea>
               </div>
               <div class="form-group">
                 <label for="inputStatus">Kategori</label>
                 <select class="form-control custom-select" id="kategoribarang">
                   <?php $ambilCat = $koneksi->query("SELECT * FROM tbl_kategoribarang");
                   while ($pecahCat = $ambilCat->fetch_array()) {
-                    echo '<option>' . $pecahCat['nama_kategoriBarang'] . '</option>';
+                    echo '<option value="' . $pecahCat['id_kategoriBarang'] . '">' . $pecahCat['nama_kategoriBarang'] . '</option>';
                   }
                   ?>
                 </select>
               </div>
               <div class="form-group">
                 <label for="inputHarga">Harga Barang</label>
-                <input type="number" id="inputHarga" class="form-control" value="<?php echo $pecah['harga_barang'] ?>">
+                <input type="number" id="hargabarang" class="form-control" value="<?php echo $pecah['harga_barang'] ?>">
               </div>
               <div class="form-group">
                 <label for="stokHarga">Stok Barang</label>
-                <input type="number" id="stokHarga" class="form-control" value="<?php echo $pecah['stok_barang'] ?>">
+                <input type="number" id="stokbarang" class="form-control" value="<?php echo $pecah['stok_barang'] ?>">
               </div>
               <div class="form-group">
                 <label for="customFile">Upload Foto</label>
@@ -197,6 +203,10 @@ include('./session.php');
                   <label class="custom-file-label d-inline-block text-truncate" for="customFile">Upload Foto</label>
                 </div>
               </div>
+            </div>
+            <div class="col-12 mb-2">
+              <a href="#" class="btn btn-secondary">Batal</a>
+              <button type="submit" id="simpan" class="btn btn-success float-right">Simpan</button>
             </div>
             <!-- /.card-body -->
           </div>
@@ -298,12 +308,6 @@ include('./session.php');
           <!-- /.card -->
         </div>
       </div>
-      <div class="row">
-        <div class="col-12">
-          <a href="#" class="btn btn-secondary">Cancel</a>
-          <input type="submit" value="Save Changes" class="btn btn-success float-right">
-        </div>
-      </div>
     </section>
     <!-- /.content -->
   </div>
@@ -329,6 +333,8 @@ include('./session.php');
   <script src="./plugins/jquery-ui/jquery-ui.min.js"></script>
   <!-- Ekko Lightbox -->
   <script src="./plugins/ekko-lightbox/ekko-lightbox.min.js"></script>
+  <!-- SweetAlert2 -->
+  <script src="./plugins/sweetalert2/sweetalert2.min.js"></script>
   <!-- bs-custom-file-input -->
   <script src="./plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
   <!-- AdminLTE App -->
@@ -345,9 +351,6 @@ include('./session.php');
         });
       });
 
-      $('.filter-container').filterizr({
-        gutterPixels: 3
-      });
       $('.btn[data-filter]').on('click', function() {
         $('.btn[data-filter]').removeClass('active');
         $(this).addClass('active');
@@ -355,6 +358,53 @@ include('./session.php');
     });
     $(document).ready(function() {
       bsCustomFileInput.init();
+    });
+
+    $(document).ready(function() {
+      $('#simpan').on('click', function() {
+        var idbarang = $('#idbarang').val();
+        var namabarang = $('#namabarang').val();
+        var deskripsibarang = $('#deskripsibarang').val();
+        var kategoribarang = $('#kategoribarang option:selected').val();
+        var hargabarang = $('#hargabarang').val();
+        var stokbarang = $('#stokbarang').val();
+        // alert(email_user+alamat_user+nama_user+id_user);
+        $.ajax({
+          url: "edit-barang-action.php",
+          type: "POST",
+          data: {
+            simpan: "yes",
+            namabarang: namabarang,
+            deskripsibarang: deskripsibarang,
+            kategoribarang: kategoribarang,
+            hargabarang: hargabarang,
+            stokbarang: stokbarang,
+            idbarang: idbarang
+          },
+          success: function(data) {
+            data = jQuery.parseJSON(data);
+            // alert(data);
+            if (data.status == "sukses") {
+              Swal.fire(
+                'Sukses!',
+                'Data berhasil diperbarui',
+                'success'
+              ).then((result) => {
+                if (result.value) {
+                  location.reload();
+                }
+              })
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Sepertinya anda memasukkan data yang salah.',
+                // footer: '<a href>Why do I have this issue?</a>'
+              })
+            }
+          }
+        });
+      });
     });
   </script>
 </body>
