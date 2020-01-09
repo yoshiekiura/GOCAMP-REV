@@ -56,10 +56,10 @@
 				<div class="menu-nav">
 					<span class="menu-header">Menu <i class="fa fa-bars"></i></span>
 					<ul class="menu-list">
-					<li><a href="./" >Beranda</a></li>
-						<li><a href="./statusTransaksi.php" >Transaksi</a></li>
-						<li><a href="./checkout.php" >Keranjang</a></li>
-						<li><a href="./profil.php" >Profil</a></li>
+						<li><a href="./">Beranda</a></li>
+						<li><a href="./statusTransaksi.php">Transaksi</a></li>
+						<li><a href="./checkout.php">Keranjang</a></li>
+						<li><a href="./profil.php">Profil</a></li>
 						<li><a href="#">Ulasan</a></li>
 					</ul>
 				</div>
@@ -80,7 +80,7 @@
 				<div id="home-slick">
 					<!-- banner -->
 					<div class="banner banner-1">
-						<img src="./img/banner01.jpg" alt="">
+						<img src="./img/bn3.jpg" alt="">
 						<div class="banner-caption text-center">
 							<h1>Tenda</h1>
 							<h3 class="white-color font-weak">Promo Sewa Tenda</h3>
@@ -88,10 +88,19 @@
 						</div>
 					</div>
 					<!-- /banner -->
-
 					<!-- banner -->
 					<div class="banner banner-1">
-						<img src="./img/banner02.jpg" alt="">
+						<img src="./img/bn2.jpg" alt="">
+						<div class="banner-caption text-center">
+							<h1>Tenda</h1>
+							<h3 class="white-color font-weak">Promo Sewa Tenda</h3>
+							<button class="primary-btn">Sewa Sekarang</button>
+						</div>
+					</div>
+					<!-- /banner -->
+					<!-- banner -->
+					<div class="banner banner-1">
+						<img src="./img/bn1.jpg" alt="">
 						<div class="banner-caption">
 							<h1 class="white-color">Barang Baru</h1>
 							<button class="primary-btn">Sewa Now</button>
@@ -128,41 +137,43 @@
 				$mulai = ($page > 1) ? ($page * $halaman) - $halaman : 0;
 				if (isset($_GET['kategori'])) {
 					$ambil = $koneksi->query("SELECT * FROM tbl_barang JOIN tbl_kategoribarang ON tbl_barang.id_kategoriBarang=tbl_kategoribarang.id_kategoriBarang WHERE tbl_kategoribarang.nama_kategoriBarang='" . $_GET['kategori'] . "' LIMIT $mulai, $halaman") or die("Last error: {$koneksi->error}\n");
-				}else if (isset($_GET['q'])) {
+				} else if (isset($_GET['q'])) {
 					$search = $_GET['q'];
 					$ambil = $koneksi->query("SELECT * FROM tbl_barang JOIN tbl_kategoribarang ON tbl_barang.id_kategoriBarang=tbl_kategoribarang.id_kategoriBarang WHERE tbl_kategoribarang.nama_kategoriBarang LIKE '%" . $search . "%' OR tbl_barang.nama_barang LIKE '%" . $search . "%'  LIMIT $mulai, $halaman") or die("Last error: {$koneksi->error}\n");
-				} else { 
+				} else {
 					$ambil = $koneksi->query("SELECT * FROM tbl_barang ORDER BY RAND() LIMIT $mulai, $halaman") or die("Last error: {$koneksi->error}\n");
 				}
 				$ambiltotal = $koneksi->query("SELECT * FROM tbl_barang") or die("Last error: {$koneksi->error}\n");
 				$total = mysqli_num_rows($ambiltotal);
 				$pages = ceil($total / $halaman);
 				while ($pecah = $ambil->fetch_array()) { ?>
-						<div class="col-md-3 col-sm-6 col-xs-6">
-							<div class="product product-single">
-								<div class="product-thumb">
-									<a href="product-page.php?id=<?php echo $pecah['id_barang'] ?>"><button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Quick view</button></a>
-									<img src="./img/<?php echo $pecah['foto_barang'] ?>" alt="">
+					<div class="col-md-3 col-sm-6 col-xs-6">
+						<div class="product product-single">
+							<div class="product-thumb">
+								<a href="product-page.php?id=<?php echo $pecah['id_barang'] ?>"><button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Quick view</button></a>
+								<img src="./img/<?php echo $pecah['foto_barang'] ?>" alt="">
+							</div>
+							<div class="product-body">
+								<h3 class="product-price"><?php echo rupiah($pecah['harga_barang']) ?></h3>
+								<div class="product-rating">
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star"></i>
+									<i class="fa fa-star-o empty"></i>
 								</div>
-								<div class="product-body">
-									<h3 class="product-price"><?php echo rupiah($pecah['harga_barang']) ?></h3>
-									<div class="product-rating">
-										<i class="fa fa-star"></i>
-										<i class="fa fa-star"></i>
-										<i class="fa fa-star"></i>
-										<i class="fa fa-star"></i>
-										<i class="fa fa-star-o empty"></i>
-									</div>
-									<a href="product-page.php?id=<?php echo $pecah['id_barang'] ?>"><h2 class="product-name"><?php echo $pecah['nama_barang'] ?></h2></a>
-									<div class="product-btns">
-										<button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
-										<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
-										<a href="<?php echo "cartUpdate.php?addCart=".$pecah['id_barang']."&&return_url=".$current_url ?>"><button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i>Masukan Ke Keranjang</button></a>
-									</div>
+								<a href="product-page.php?id=<?php echo $pecah['id_barang'] ?>">
+									<h2 class="product-name"><?php echo $pecah['nama_barang'] ?></h2>
+								</a>
+								<div class="product-btns">
+									<button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
+									<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
+									<a href="<?php echo "cartUpdate.php?addCart=" . $pecah['id_barang'] . "&&return_url=" . $current_url ?>"><button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i>Masukan Ke Keranjang</button></a>
 								</div>
 							</div>
 						</div>
-					<?php } ?>
+					</div>
+				<?php } ?>
 
 				<!-- /Product Single -->
 			</div>

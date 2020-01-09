@@ -7,7 +7,7 @@ include('./session.php');
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | Project Edit</title>
+  <title>TAMBAH PELANGGAN</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -17,6 +17,8 @@ include('./session.php');
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Ekko Lightbox -->
   <link rel="stylesheet" href="./plugins/ekko-lightbox/ekko-lightbox.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="./plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="./dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
@@ -146,7 +148,6 @@ include('./session.php');
                   <i class="fas fa-minus"></i></button>
               </div>
             </div>
-            <form action="barang-action.php" role="form" method="post" enctype="multipart/form-data">
               <div class="card-body">
                 <div class="form-group">
                   <label for="inputName">Nama Lengkap</label>
@@ -170,7 +171,7 @@ include('./session.php');
                 </div>
                 <div class="form-group">
                   <label for="inputStatus">Status</label>
-                  <select class="form-control custom-select" name="kategoriBarang">
+                  <select class="form-control custom-select" id="statususer" name="statususer">
                     <option selected disabled>Pilih Status</option>
                     <option>TIDAK AKTIF</option>
                     <option>AKTIF</option>
@@ -178,8 +179,11 @@ include('./session.php');
                   </select>
                 </div>
               </div>
-
-              <!-- /.card-body -->
+              <div class="col-12 mb-2">
+                <a href="#" class="btn btn-secondary">Batal</a>
+                <button type="submit" id="simpan" class="btn btn-success float-right">Simpan</button>
+              </div>
+            <!-- /.card-body -->
           </div>
           <!-- /.card -->
         </div>
@@ -222,14 +226,6 @@ include('./session.php');
           <!-- /.card -->
         </div>
       </div>
-      <div id="message">
-        <div class="row">
-          <div class="col-12">
-            <a href="#" class="btn btn-secondary">Cancel</a>
-            <input type="submit" value="Save Changes" name="submit" class="btn btn-success float-right">
-          </div>
-          </form>
-        </div>
     </section>
     <!-- /.content -->
   </div>
@@ -255,6 +251,8 @@ include('./session.php');
   <script src="./plugins/jquery-ui/jquery-ui.min.js"></script>
   <!-- Ekko Lightbox -->
   <script src="./plugins/ekko-lightbox/ekko-lightbox.min.js"></script>
+  <!-- SweetAlert2 -->
+  <script src="./plugins/sweetalert2/sweetalert2.min.js"></script>
   <!-- bs-custom-file-input -->
   <script src="./plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
   <!-- AdminLTE App -->
@@ -283,39 +281,53 @@ include('./session.php');
       bsCustomFileInput.init();
     });
 
-    function readURL(input) {
-      var filesAmount = input.files.length;
-      for (i = 0; i < filesAmount; i++) {
-        if (input.files && input.files[i]) {
-          var reader = new FileReader();
-
-          reader.onload = function(e) {
-            $("#preview" + i).attr('src', e.target.result);
+    $(document).ready(function() {
+      $('#simpan').on('click', function() {
+        var inputName = $('#inputName').val();
+        var inputUsername = $('#inputUsername').val();
+        var inputAlamat = $('#inputAlamat').val();
+        var inputEmail = $('#inputEmail').val();
+        var inputTelepon = $('#inputTelepon').val();
+        var statususer = $('#statususer option:selected').text();
+        // alert(email_user+alamat_user+nama_user+id_user);
+        $.ajax({
+          url: "tambah-pelanggan-action.php",
+          type: "POST",
+          data: {
+            simpan: "yes",
+            inputName: inputName,
+            inputUsername: inputUsername,
+            inputAlamat: inputAlamat,
+            inputEmail: inputEmail,
+            inputTelepon: inputTelepon,
+            statususer: statususer
+          },
+          success: function(data) {
+            data = jQuery.parseJSON(data);
+            // alert(data);
+            if (data.status == "sukses") {
+              Swal.fire(
+                'Sukses!',
+                'Data berhasil ditambahkan',
+                'success'
+              ).then((result) => {
+                if (result.value) {
+                  // location.reload();
+                  location.replace("edit-pelanggan.php?id="+data.id);
+                }
+              })
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Sepertinya anda memasukkan data yang salah.',
+                // footer: '<a href>Why do I have this issue?</a>'
+              })
+            }
           }
-
-          reader.readAsDataURL(input.files[i]);
-        }
-      }
-    }
-
-    $("#fotoBarang").change(function() {
-      readURL(this);
+        });
+      });
     });
-
-    // indirect ajax
-    // file collection array
-    // var fileCollection = new Array();
-    // $('#fotoBarang').on('change', function(e) {
-    //   var files = e.target.files;
-    //   $.each(files, function(i, file) {
-    //     fileCollection.push(file);
-    //     var reader = new FileReader();
-    //     reader.readAsDataURL(file);
-    //     reader.onload = function(e) {
-    //       $('#preview').attr('src', e.target.result);
-    //     }
-    //   });
-    // });
   </script>
 </body>
 

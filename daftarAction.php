@@ -38,7 +38,7 @@ if (isset($_POST['email']) && isset($_POST['username']) && isset($_POST['passwor
                     sendMail($email, $subject, $pesan, $rurl);
                 } else {
                     $rurl = explode("?", $rurl);
-                    header('location: ' . $rurl[0].'?status=smtpoff');
+                    header('location: ' . $rurl[0] . '?status=smtpoff');
                 }
             }
         } else {
@@ -46,17 +46,22 @@ if (isset($_POST['email']) && isset($_POST['username']) && isset($_POST['passwor
         }
         // header('location: login.php');
     } else {
-
-        $ambil = $koneksi->query("SELECT * FROM tbl_verifikasidaftar WHERE email='$email' AND STR_TO_DATE('$now', '%Y-%m-%d %H:%i')<expired");
-        $hitung = mysqli_num_rows($ambil);
-        if ($hitung > 0) {
-            header('location: daftar.php?status=limit');
+        $ambilUser = $koneksi->query("SELECT * FROM tbl_user WHERE email_user='$email' OR username_user='$username' AND status_user='TIDAK AKTIF'");
+        $hitungUser = mysqli_num_rows($ambilUser);
+        if ($hitungUser > 0) {
+            header('location: daftar.php?status=terdaftar');
         } else {
-            $query = $koneksi->query("INSERT INTO tbl_verifikasidaftar VALUES('','$email','$code','$expired')");
-            $rurl = 'daftar.php?status=verifikasi';
-            $subject = '' . $code . ' adalah kode aktivasi akun Anda';
-            $pesan = 'Terima kasih telah mendaftar.<br>Akun anda berhasil terdaftar, anda dapat login setelah melakukan aktifasi akun.<br> <br>------------------------<br>Kode Verifikasi	: ' . $code . '<br>------------------------<br><br>Tolong klik link dibawah ini untuk melakukan aktivasi akun anda:<br>http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER["PHP_SELF"]) . '/verify.php?email=' . $email . '&kode=' . $code . '';
-            sendMail($email, $subject, $pesan, $rurl);
+            $ambil = $koneksi->query("SELECT * FROM tbl_verifikasidaftar WHERE email='$email' AND STR_TO_DATE('$now', '%Y-%m-%d %H:%i')<expired");
+            $hitung = mysqli_num_rows($ambil);
+            if ($hitung > 0) {
+                $query = $koneksi->query("INSERT INTO tbl_verifikasidaftar VALUES('','$email','$code','$expired')");
+                $rurl = 'daftar.php?status=verifikasi';
+                $subject = '' . $code . ' adalah kode aktivasi akun Anda';
+                $pesan = 'Terima kasih telah mendaftar.<br>Akun anda berhasil terdaftar, anda dapat login setelah melakukan aktifasi akun.<br> <br>------------------------<br>Kode Verifikasi	: ' . $code . '<br>------------------------<br><br>Tolong klik link dibawah ini untuk melakukan aktivasi akun anda:<br>http://' . $_SERVER['SERVER_NAME'] . dirname($_SERVER["PHP_SELF"]) . '/verify.php?email=' . $email . '&kode=' . $code . '';
+                sendMail($email, $subject, $pesan, $rurl);
+            } else {
+                header('location: daftar.php?status=limit');
+            }
         }
     }
 } else if (isset($_POST['kode'])) {
@@ -93,4 +98,3 @@ if (isset($_POST['email']) && isset($_POST['username']) && isset($_POST['passwor
 } else {
     header('location: daftar.php?status=kosong');
 }
-

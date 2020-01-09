@@ -9,7 +9,7 @@ require '../PHPMailer/src/PHPMailer.php';
 
 require '../PHPMailer/src/SMTP.php';
 
-// include('koneksi.php');
+include('koneksi.php');
 
 function sendMail($emailTo, $Nsubject, $pesan, $rurl)
 {

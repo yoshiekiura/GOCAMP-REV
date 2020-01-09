@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-	<title>E-SHOP HTML Template</title>
+	<title>Checkout</title>
 	<?php
 	if (isset($_GET['status']) && $_GET['status'] == "tanggalsalah") {
 		echo '<script type="text/javascript">alert("Harap masukkan tanggal pinjam tidak kurang dari hari ini! ");</script>';
@@ -135,9 +135,9 @@
 											echo '<td class="details">';
 											echo 	'<a href="#">' . $pecah['nama_barang'] . '</a>';
 											echo '</td>';
-											echo '<td class="price text-center"><strong>' . rupiah($pecah['harga_barang']) . '</strong></td>';
-											echo '<td class="qty text-center"><input class="input" type="number" onkeyup="update(this)" name="' . $pecah['id_barang'] . '" value="' . $jumlah . '" maxlength="2"></td>';
-											echo '<td class="total text-center"><strong class="primary-color">' . rupiah($totalHarga) . '</strong></td>';
+											echo '<td class="price text-center" id="hargabarang-' . $id_barang . '" value="' . $pecah['harga_barang'] . '"><strong>' . rupiah($pecah['harga_barang']) . '</strong></td>';
+											echo '<td class="qty text-center"><input class="input" type="number" id="qty-' . $id_barang . '" onkeyup="update(this)" name="' . $pecah['id_barang'] . '" value="' . $jumlah . '" maxlength="2"></td>';
+											echo '<td class="total text-center" ><strong class="primary-color" value="'.$totalHarga.'" id="showqty-' . $id_barang . '">' . rupiah($totalHarga) . '</strong></td>';
 											echo '<td class="text-center"><a href="cartUpdate.php?hapuscart=' . $id_barang . '&return_url=' . $current_url . '"><i class="fa fa-close fa-lg"></i></a></td>';
 											echo '</tr>';
 										}
@@ -156,9 +156,9 @@
 													echo '<td class="details">';
 													echo 	'<a href="#">' . $pecah['nama_barang'] . '</a>';
 													echo '</td>';
-													echo '<td class="price text-center"><strong>' . rupiah($pecah['harga_barang']) . '</strong></td>';
-													echo '<td class="qty text-center"><input class="input" onkeyup="update(this)" name="' . $pecahCart['id_barang'] . '" type="number" value="' . $pecahCart["jumlah_cart"] . '" maxlength="2"></td>';
-													echo '<td class="total text-center"><strong class="primary-color">' . rupiah($totalHarga) . '</strong></td>';
+													echo '<td class="price text-center" id="hargabarang-' . $pecahCart["id_barang"] . '" value="' . $pecah['harga_barang'] . '"><strong>' . rupiah($pecah['harga_barang']) . '</strong></td>';
+													echo '<td class="qty text-center"><input class="input" id="qty-' . $pecahCart["id_barang"] . '" onkeyup="update(this)" name="' . $pecahCart['id_barang'] . '" type="number" value="' . $pecahCart["jumlah_cart"] . '" maxlength="2"></td>';
+													echo '<td class="total text-center" ><strong class="primary-color" value="'.$totalHarga.'" id="showqty-' . $pecahCart["id_barang"] . '">' . rupiah($totalHarga) . '</strong></td>';
 													echo '<td class="text-center"><a href="cartUpdate.php?hapuscart=' . $pecahCart["id_barang"] . '&return_url=' . $current_url . '"><i class="fa fa-close fa-lg"></i></a></td>';
 													echo '</tr>';
 												}
@@ -264,31 +264,95 @@
 			}
 		})
 
+		// $('#pilihBarang').on('change', function() {
+		// 	var id = $(this).parent().find('#pilihBarang option:selected').val();
+		// 	var nama = $(this).parent().find('#pilihBarang option:selected').text();
+		// 	$.ajax({
+		// 		url: "paket-barang-action.php",
+		// 		type: "POST",
+		// 		data: {
+		// 			id_barang: id,
+		// 			tipe: 'add'
+		// 		},
+		// 		success: function(data) {
+		// 			var htmlToAppend = "<tr><td id='td_id'>" + id + "</td><td>" + nama + "</td>" + '<td><a class="btn btn-danger btn-sm" id="hapuspaket" href="#"><i class="fas fa-trash"> </i>Delete</a></td></tr>';
+		// 			$("#showPaketBarang").append(htmlToAppend);
+		// 		}
+		// 	});
+		// });
+
+		// function increment_quantity(cart_id) {
+		// 	var inputQuantityElement = $("#input-quantity-" + cart_id);
+		// 	var newQuantity = parseInt($(inputQuantityElement).val()) + 1;
+		// 	save_to_db(cart_id, newQuantity);
+		// }
+
+		// function decrement_quantity(cart_id) {
+		// 	var inputQuantityElement = $("#input-quantity-" + cart_id);
+		// 	if ($(inputQuantityElement).val() > 1) {
+		// 		var newQuantity = parseInt($(inputQuantityElement).val()) - 1;
+		// 		save_to_db(cart_id, newQuantity);
+		// 	}
+		// }
+
+		// function save_to_db(cart_id, new_quantity) {
+		// 	var inputQuantityElement = $("#input-quantity-" + cart_id);
+		// 	$.ajax({
+		// 		url: "update_cart_quantity.php",
+		// 		data: "cart_id=" + cart_id + "&new_quantity=" + new_quantity,
+		// 		type: 'post',
+		// 		success: function(response) {
+		// 			$(inputQuantityElement).val(new_quantity);
+		// 		}
+		// 	});
+		// }
+
 		// $("input").on("keyup", function() {
-			function update(e) {
-				var id = $(e).attr('name');
-				// var id = $('input[name=' + name + ']').val();
-				// alert(id);
-				var jumlahcart = $(e).val();
-				$.ajax({
-					url: "checkoutAction.php",
-					type: "POST",
-					data: {
-						action: "jumlahcart",
-						id: id,
-						jumlahcart: jumlahcart,
-					},
-					success: function(data) {
-						data = jQuery.parseJSON(data);
-						// console.log(data.status);
-						if (data.status == true) {
-							$("#jumlahcart").focus();
-						} else {
-							alert("Sepertinya ada yang salah");
-						}
+		function update(e) {
+			var total = 0;
+			var totals = 0;
+			var subtotal = 0;
+			var id = $(e).attr('name');
+			var hargabarang = parseInt($("#hargabarang-" + id).attr("value"));
+			// console.log(id);
+			// console.log(hargabarang);
+			// var a = parseInt($('input[name=subTotal]').val());
+			// 	var b = parseInt($('input[name=durasi_pinjam]').val());
+			// var showqty = $("#hargabarang-" + id);
+			// var id = $('input[name=' + name + ']').val();
+			// alert(id);
+			// alert(hargabarang);
+			var jumlahcart = $(e).val();
+			var totals = jumlahcart * hargabarang;
+			
+			// console.log(hargabarang);
+			$.ajax({
+				url: "checkoutAction.php",
+				type: "POST",
+				data: {
+					action: "jumlahcart",
+					id: id,
+					jumlahcart: jumlahcart,
+				},
+				success: function(data) {
+					data = jQuery.parseJSON(data);
+					// console.log(data.status);
+					if (data.status == true) {
+						$("#jumlahcart").focus();
+						$("#showqty-" + id).text('Rp ' + rupiah(totals));
+						var a = parseInt($('input[name=subTotal]').val());
+						var showqty = parseInt($("#showqty-" + id).attr("value"));
+						subtotal = showqty+a-totals;
+						total = a * b;
+						$('#sub-total').text('Rp ' + rupiah(total));
+						// console.log($('#total-harga').html(total));
+						$('#total-harga').text('Rp ' + rupiah(total));
+					} else {
+						alert("Sepertinya ada yang salah");
 					}
-				});
-			}
+				}
+			});
+		}
 		// })
 	</script>
 

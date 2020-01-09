@@ -21,7 +21,7 @@ if (isset($email) && isset($password)) {
         if ($countRows > 0) {
           $koneksi->query("UPDATE tbl_cart SET jumlah_cart=jumlah_cart+$jumlah WHERE id_user='$id_user' AND id_barang='$id_barang'") or die("Last error: {$koneksi->error}\n");
         } else {
-          $koneksi->query("INSERT INTO tbl_cart VALUES('','$id_user','$id_barang','$jumlah')") or die("Last error: {$koneksi->error}\n");
+          $koneksi->query("INSERT INTO tbl_cart VALUES('$id_user','$id_barang','$jumlah')") or die("Last error: {$koneksi->error}\n");
         }
       }
       unset($_SESSION["cart"]);

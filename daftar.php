@@ -1,4 +1,7 @@
 <?php
+if (!isset($_SESSION)) {
+    session_start();
+}
 if (isset($_SESSION['id_login'])) {
     header('location: ./');
 }
@@ -13,16 +16,6 @@ if (isset($_SESSION['id_login'])) {
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <title>DAFTAR USER</title>
-    <script type="text/javascript">
-        function valid() {
-            if (document.forgot.password.value != document.forgot.password2.value) {
-                alert("Password and Confirm Password Field do not match !!");
-                document.forgot.password2.focus();
-                return false;
-            }
-            return true;
-        }
-    </script>
 
     <!-- Google font -->
     <link href="https://fonts.googleapis.com/css?family=Hind:400,700" rel="stylesheet">
@@ -76,7 +69,7 @@ if (isset($_SESSION['id_login'])) {
                             </div>
                             <div class="form-group">
                                 <p>Email</p>
-                                <input class="input" type="email" name="email" placeholder="Masukkan Email" maxlength="40">
+                                <input class="input" type="email" id="email" name="email" placeholder="Masukkan Email" maxlength="40">
                             </div>
                             <div class="form-group">
                                 <p>No.Hp</p>
@@ -118,9 +111,9 @@ if (isset($_SESSION['id_login'])) {
                                 <p>Kode Verifikasi</p>
                                 <input class="input" type="number" name="kode" placeholder="Masukkan kode verifikasi anda" min="0" step="1" maxlength="6">
                             </div>
-                        <?php } else if ($_GET['status'] == "gagal") { ?>
+                        <?php } else if ($_GET['status'] == "gagal" || $_GET['status'] == "terdaftar") { ?>
                             <script type="text/javascript">
-                                alert("Terdapat masalah pada koneksi, silahkan gunakan email yang valid!");
+                                alert("Terdapat masalah pada koneksi, silahkan gunakan email yang valid atau belum terdaftar!");
                             </script>
                             <div class="form-group">
                                 <div class="form-group">
@@ -129,7 +122,7 @@ if (isset($_SESSION['id_login'])) {
                                 </div>
                                 <div class="form-group">
                                     <p>Email</p>
-                                    <input class="input" type="email" name="email" placeholder="Masukkan Email" maxlength="40">
+                                    <input class="input" type="email" id="email" name="email" placeholder="Masukkan Email" maxlength="40">
                                 </div>
                                 <div class="form-group">
                                     <p>No.Hp</p>
@@ -170,16 +163,53 @@ if (isset($_SESSION['id_login'])) {
     <script src="js/nouislider.min.js"></script>
     <script src="js/jquery.zoom.min.js"></script>
     <script src="js/main.js"></script>
-    <script>
+    <script type="text/javascript">
+        function valid() {
+            if (document.forgot.password.value != document.forgot.password2.value) {
+                alert("Password and Confirm Password Field do not match !!");
+                document.forgot.password2.focus();
+                return false;
+            }
+            return true;
+        }
+
+
         // check if input is bigger than 3
         $("input").on("keyup", function() {
             var maxLength = $(this).attr("maxlength");
-            if (maxLength == $(this).val().length) {
-                alert("Anda hanya bisa mengisi sebanyak " + maxLength + " karakter")
-                $(this).focus()
+            var name = $(this).attr("name");
+
+            function checkLength() {
+                if ($(this).val().length > maxLength) {
+                    alert("Anda hanya bisa mengisi sebanyak " + maxLength + " karakter")
+                    $(this).focus()
+                }
             }
+            function checkEmail(){
+                var email = $('#email').val();
+                var status = "";
+                if (email != '') {
+                    $.ajax({
+                        url: 'checkdaftar.php',
+                        type: 'POST',
+                        async: false,
+                        data: {
+                            email: email
+                        },
+                        success: function(data) {
+                            data = jQuery.parseJSON(data);
+                            status = data.status;
+                        }
+                    });
+                } else {
+                    return false;
+                }
+                return status;
+            }
+
         })
     </script>
+
 </body>
 
 </html>

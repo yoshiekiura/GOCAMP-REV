@@ -11,54 +11,56 @@ require 'PHPMailer/src/PHPMailer.php';
 
 require 'PHPMailer/src/SMTP.php';
 
+// include('./koneksi.php');
+
 function sendMail($emailTo, $Nsubject, $pesan, $rurl)
 {
+
     $mail = new PHPMailer(true);                              // Passing `true` enables exceptions
+    global $koneksi;
+    $ambil = $koneksi->query("SELECT * FROM tbl_setting");
+    $pecah = $ambil->fetch_array();
 
-    try {
-        //Server settings
 
-        $mail->SMTPDebug = 2;                                 // Enable verbose debug output
+    $mail->SMTPDebug = 2;                                 // Enable verbose debug output
 
-        $mail->isSMTP();                                      // Set mailer to use SMTP
+    $mail->isSMTP();                                      // Set mailer to use SMTP
 
-        $mail->Host = 'smtp.sendgrid.net';                     // Specify main and backup SMTP servers
+    $mail->Host = $pecah['smtp_server'];                     // Specify main and backup SMTP servers
 
-        $mail->SMTPAuth = true;                               // Enable SMTP authentication
+    $mail->SMTPAuth = true;                               // Enable SMTP authentication
 
-        $mail->Username = "apikey";     // SMTP username
+    $mail->Username = $pecah['smtp_username'];     // SMTP username
 
-        $mail->Password = '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';                         // SMTP password
+    $mail->Password = $pecah['smtp_password'];                         // SMTP password
 
-        $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+    $mail->SMTPSecure = $pecah['smtp_secure'];;                            // Enable TLS encryption, `ssl` also accepted
 
-        $mail->Port = 587;                                    // TCP port to connect to
+    $mail->Port = $pecah['smtp_port'];;                                    // TCP port to connect to
 
-        //Recipients
+    //Recipients
 
-        $mail->setFrom("noreply@gocamppolije.com", "GOCAMP"); //email pengirim
+    $mail->setFrom("noreply@gocamppolije.com", "GOCAMP"); //email pengirim
 
-        $mail->addAddress($emailTo); // Email penerima
+    $mail->addAddress($emailTo); // Email penerima
 
-        $mail->addReplyTo("noreply@gocamppolije.com");
+    $mail->addReplyTo("noreply@gocamppolije.com");
 
-        //Content
+    //Content
 
-        $mail->isHTML(true);                                  // Set email format to HTML
+    $mail->isHTML(true);                                  // Set email format to HTML
 
-        $mail->Subject = "$Nsubject - GOCAMP ";
+    $mail->Subject = "$Nsubject - GOCAMP ";
 
-        $mail->Body    = $pesan;
+    $mail->Body    = $pesan;
 
-        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+    $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
-        $mail->send();
+    $mail->send();
+    if ($rurl != "") {
         header('location: ' . $rurl);
-        // echo("<script>location.href = '$rurl';</script>");
-        // exit(header('location: '.$rurl));
-    } catch (Exception $e) {
-
-        echo 'Message could not be sent.';
+    } else {
+        return true;
     }
 
     // exit();

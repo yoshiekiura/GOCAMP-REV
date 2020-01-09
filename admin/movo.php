@@ -8,7 +8,7 @@ require('./ovo.php');
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | User Profile</title>
+  <title>Manajemen OVO</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -51,7 +51,7 @@ require('./ovo.php');
           </a>
         </li>
         </li>
-        <li class="nav-item has-treeview menu-open">
+        <li class="nav-item has-treeview">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-th"></i>
             <p>
@@ -79,7 +79,7 @@ require('./ovo.php');
               </a>
             </li>
             <li class="nav-item">
-              <a href="./kategori.php" class="nav-link active">
+              <a href="./kategori.php" class="nav-link">
                 <i class="fas fa-plus-circle nav-icon"></i>
                 <p>Kategori Barang</p>
               </a>
@@ -110,7 +110,7 @@ require('./ovo.php');
           </ul>
         </li>
         <li class="nav-item">
-          <a href="./setting.php" class="nav-link">
+          <a href="./setting.php" class="nav-link active">
             <i class="nav-icon fas fa-cogs"></i>
             <p>Pengaturan</p>
           </a>

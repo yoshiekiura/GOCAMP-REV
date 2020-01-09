@@ -24,7 +24,7 @@ if (isset($_SESSION['id_login'])) {
 		<div class="pull-left">
 			<!-- Logo -->
 			<div class="header-logo">
-				<a class="logo" href="/SOLO">
+				<a class="logo" href="./">
 					<img src="./img/logo.png" alt="">
 				</a>
 			</div>

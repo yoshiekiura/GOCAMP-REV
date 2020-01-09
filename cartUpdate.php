@@ -39,7 +39,7 @@ if (isset($_GET['addCart']) && isset($_GET["return_url"])) {
             if ($rowcountCart > 0) {
                 $koneksi->query("UPDATE tbl_cart SET jumlah_cart=jumlah_cart+'" . $jumlah . "' WHERE id_barang='" . $Aid_barang . "'") or die("Last error: {$koneksi->error}\n");
             } else {
-                $koneksi->query("INSERT INTO tbl_cart VALUES('','$id_user','$Aid_barang','$jumlah')") or die("Last error: {$koneksi->error}\n");
+                $koneksi->query("INSERT INTO tbl_cart VALUES('$id_user','$Aid_barang','$jumlah')") or die("Last error: {$koneksi->error}\n");
             }
         }
     }

@@ -1,5 +1,7 @@
 <?php
-include('../config/koneksi.php'); //include merupan perintah untuk menyisipkanfile php ke dalam file php yang lainnya
+include('./session.php');
+include('../config/koneksi.php');
+ //include merupan perintah untuk menyisipkanfile php ke dalam file php yang lainnya
 // $id_lapak= $_POST['d_lapak_laundry'];
 if (isset($_POST['submit'])) {
     $ekstensi_diperbolehkan    = array('png', 'jpg');

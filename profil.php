@@ -96,7 +96,8 @@ include('config/session.php');
 						<div class="section-title">
 							<h4 class="title">Informasi Profil</h4>
 						</div>
-						<form action="input-aksi.php" method="post">
+						<form action="profil-action.php" method="post">
+						<input type="hidden" name="id_user" value="<?php echo $pecah['id_user']?>">
 							<div class="form-group">
 								<h4>Nama Lengkap</h4>
 								<input class="input" type="text" name="nama_user" placeholder="Masukkan Nama Lengkap" value="<?php echo $pecah['nama_user'] ?>">
@@ -135,7 +136,7 @@ include('config/session.php');
 
 								<p class="text-muted text-center"><?php echo $pecah['status_user'] ?></p>
 
-								<a href="./verifikasi.php" class="rounded-lg primary-btn btn-block btn-flat text-center"><b>Verifikasi Akun Sekarang</b></a>
+								<!-- <a href="./verifikasi.php" class="rounded-lg primary-btn btn-block btn-flat text-center"><b>Verifikasi Akun Sekarang</b></a> -->
 								<!-- <button class="primary-btn btn-block btn-flat" onclick="return valid();" type="submit" name="submit">Kirim</button> -->
 							</div>
 						</div>
@@ -143,7 +144,9 @@ include('config/session.php');
 						<div class="section-title">
 							<h4 class="title">Ubah Password</h4>
 						</div>
+						<form action="profil-action.php" method="post">
 						<div class="form-group">
+						<input type="hidden" name="id_user" value="<?php echo $pecah['id_user']?>">
 							<h4>Password Baru</h4>
 							<input class="input" type="password" name="password_baru" placeholder="Masukkan password baru anda">
 						</div>
@@ -154,6 +157,7 @@ include('config/session.php');
 						<div class="form-group">
 							<button class="primary-btn" name="submit">UBAH</button>
 						</div>
+						</form>
 					</div>
 				</div>
 
@@ -207,8 +211,6 @@ include('config/session.php');
 		$("#imageUpload").change(function() {
 			previewProfileImage(this);
 		});
-
-		
 	</script>
 </body>
 

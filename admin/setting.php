@@ -7,7 +7,7 @@ include('./session.php');
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | General Form Elements</title>
+  <title>SETTING</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -210,6 +210,7 @@ include('./session.php');
                 <?php if (!file_exists("config.txt") && !empty($pecah['no_ovo'])) { ?>
                   <button type="submit" name="login-ovo" class="btn btn-success">Login</button>
                 <?php } ?>
+                <a href="movo.php" class="btn btn-success">Pengaturan</a>
               </div>
               </form>
               <!-- /.card-body -->
@@ -276,6 +277,7 @@ include('./session.php');
               <div class="card-footer">
                 <button type="submit" id="smtpsubmit" class="btn btn-primary">Submit</button>
                 <button type="submit" name="reset-smtp" id="reset-smtp" class="btn btn-danger">Reset</button>
+                <a href="pesan.php" class="btn btn-success">Edit Pesan</a>
               </div>
               <!-- /.card-body -->
             </div>
@@ -316,7 +318,7 @@ include('./session.php');
     <div class="float-right d-none d-sm-block">
       <b>Version</b> 3.0.1
     </div>
-    <strong>Copyright &copy; 2014-2019 <a href="http://adminlte.io">AdminLTE.io</a>.</strong> All rights
+    <strong>Copyright &copy; 2019 <a href="http://adminlte.io">GOCAMP</a>.</strong> All rights
     reserved.
   </footer>
 
