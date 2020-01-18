@@ -48,7 +48,7 @@ if (isset($_POST['email']) && isset($_POST['username']) && isset($_POST['passwor
     } else {
         $ambilUser = $koneksi->query("SELECT * FROM tbl_user WHERE email_user='$email' OR username_user='$username' AND status_user='TIDAK AKTIF'");
         $hitungUser = mysqli_num_rows($ambilUser);
-        if ($hitungUser > 0) {
+        if ($hitungUser == 0) {
             header('location: daftar.php?status=terdaftar');
         } else {
             $ambil = $koneksi->query("SELECT * FROM tbl_verifikasidaftar WHERE email='$email' AND STR_TO_DATE('$now', '%Y-%m-%d %H:%i')<expired");
