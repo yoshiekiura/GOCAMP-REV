@@ -11,7 +11,7 @@ if (isset($_GET['email']) && isset($_GET['kode'])) {
     $ambil = $koneksi->query("SELECT * FROM tbl_verifikasidaftar WHERE kode='$kode' AND STR_TO_DATE('$now', '%Y-%m-%d %H:%i')<expired");
     $hitung = mysqli_num_rows($ambil);
     if ($hitung > 0) {
-        $query = $koneksi->query("UPDATE tbl_user SET status_user='VERIFIKASI' WHERE email_user='$email'");
+        $query = $koneksi->query("UPDATE tbl_user SET status_user='AKTIF' WHERE email_user='$email'");
         if (!$query) {
             header('location: daftar.php?status=gagal');
         } else {
