@@ -22,11 +22,7 @@ if (isset($_GET["return_url"]) && isset($_GET["tanggal_pinjam"]) && isset($_GET[
         $input = (int) $num_pre_idBarang + 1;
         $idPeminjaman = str_pad($input, 6, "PMJ001", STR_PAD_LEFT);
         if ($metodePembayaran != "COD") {
-            while (checkTotal($subTotal, $koneksi)) {
-                $subTotal =  $subTotal + rand(11, 999);
-            }
-        } else {
-            $subTotal = $_GET['subTotal'];
+            $subTotal =  $subTotal + $input;
         }
     }
 
@@ -49,7 +45,21 @@ if (isset($_GET["return_url"]) && isset($_GET["tanggal_pinjam"]) && isset($_GET[
                 if ($count_cart > 0) {
                     $koneksi->query("INSERT INTO tbl_peminjaman VALUES('" . $idPeminjaman . "','" . $_SESSION['id_login'] . "','" . $tanggalTransaksi . "','" . $durasiPinjam . "','" . $tanggalPinjam . "','BELUM DIBAYAR','" . $metodePembayaran . "','" . $subTotal . "')") or die("Last error: {$koneksi->error}\n");
                     while ($pecahCart = $ambilCart->fetch_array()) {
-                        $koneksi->query("INSERT INTO tbl_detailpeminjaman VALUES('" . $idPeminjaman . "','" . $pecahCart['id_barang'] . "','" . $pecahCart['jumlah_cart'] . "')") or die("Last error: {$koneksi->error}\n");
+                        $ambilBarang = $koneksi->query("SELECT * FROM tbl_barang WHERE id_barang='" . $pecahCart['id_barang'] . "'") or die("Last error: {$koneksi->error}\n");
+                        $pecahBarang = $ambilBarang->fetch_array();
+                        if ($pecahBarang['stok_barang'] < $pecahCart['jumlah_cart']) {
+                            $ambilDPeminjaman = $koneksi->query("SELECT * FROM tbl_cart JOIN tbl_detailpeminjaman ON tbl_cart.id_barang=tbl_detailpeminjaman.id_barang WHERE tbl_cart.id_user='" . $_SESSION['id_login'] . "'") or die("Last error: {$koneksi->error}\n");
+                            $count_dpeminjaman = mysqli_num_rows($ambilDPeminjaman);
+                            if ($count_dpeminjaman > 0) {
+                                while ($pecahdpeminjaman = $ambilDPeminjaman->fetch_array()) {
+                                    $koneksi->query("UPDATE tbl_barang SET stok_barang=stok_barang+'" . $pecahdpeminjaman['jumlah_detailBarang'] . "' WHERE id_barang='" . $pecahdpeminjaman['id_barang'] . "'") or die("Last error: {$koneksi->error}\n");
+                                }
+                            }
+                            header('Location:' . $return_url);
+                        } else {
+                            $koneksi->query("INSERT INTO tbl_detailpeminjaman VALUES('" . $idPeminjaman . "','" . $pecahCart['id_barang'] . "','" . $pecahCart['jumlah_cart'] . "')") or die("Last error: {$koneksi->error}\n");
+                            $koneksi->query("UPDATE tbl_barang SET stok_barang=stok_barang-'".$pecahCart['jumlah_cart']."' WHERE id_barang='" . $pecahCart['id_barang'] . "'") or die("Last error: {$koneksi->error}\n");
+                        }
                     }
                     $koneksi->query("DELETE FROM tbl_cart WHERE id_user='" . $_SESSION['id_login'] . "'") or die("Last error: {$koneksi->error}\n");
                     header('Location: ./pembayaran.php?id=' . $idPeminjaman . '');
