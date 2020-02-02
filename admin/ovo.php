@@ -1,5 +1,4 @@
 <?php
-include('./session.php');
 class Ovo
 {
 	public $token;
