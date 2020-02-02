@@ -17,6 +17,8 @@ include('./session.php');
   <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Ekko Lightbox -->
   <link rel="stylesheet" href="./pages/plugins/ekko-lightbox/ekko-lightbox.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="./plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="./dist/css/adminlte.min.css">
   <!-- Google Font: Source Sans Pro -->
@@ -173,7 +175,7 @@ include('./session.php');
               </div>
               <div class="form-group">
                 <label for="inputStatusPeminjaman">Status Peminjaman</label>
-                <select class="form-control custom-select">
+                <select class="form-control custom-select" id="statuspeminjaman">
                   <option selected disabled>Pilih Status</option>
                   <option selected><?php echo $pecah['status_peminjaman'] ?></option>
                   <option>BELUM DIBAYAR</option>
@@ -191,6 +193,10 @@ include('./session.php');
                 <label for="tglpinjam">Tanggal Pinjam</label>
                 <input type="date" id="tglpinjam" class="form-control" value="<?php echo $pecah['tgl_pinjam'] ?>">
               </div>
+            </div>
+            <div class="col-12 mb-2">
+              <a href="#" class="btn btn-secondary">Batal</a>
+              <button type="submit" id="simpan" class="btn btn-success float-right">Simpan</button>
             </div>
             <!-- /.card-body -->
           </div>
@@ -279,12 +285,6 @@ include('./session.php');
           <!-- /.card -->
         </div>
       </div>
-      <div class="row">
-        <div class="col-12">
-          <a href="#" class="btn btn-secondary">Cancel</a>
-          <input type="submit" value="Save Changes" class="btn btn-success float-right">
-        </div>
-      </div>
     </section>
     <!-- /.content -->
   </div>
@@ -310,6 +310,8 @@ include('./session.php');
   <script src="./plugins/jquery-ui/jquery-ui.min.js"></script>
   <!-- Ekko Lightbox -->
   <script src="./plugins/ekko-lightbox/ekko-lightbox.min.js"></script>
+  <!-- SweetAlert2 -->
+  <script src="./plugins/sweetalert2/sweetalert2.min.js"></script>
   <!-- bs-custom-file-input -->
   <script src="./plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
   <!-- AdminLTE App -->
@@ -326,9 +328,6 @@ include('./session.php');
         });
       });
 
-      $('.filter-container').filterizr({
-        gutterPixels: 3
-      });
       $('.btn[data-filter]').on('click', function() {
         $('.btn[data-filter]').removeClass('active');
         $(this).addClass('active');
@@ -336,6 +335,59 @@ include('./session.php');
     });
     $(document).ready(function() {
       bsCustomFileInput.init();
+    });
+
+    $(document).ready(function() {
+      $('#simpan').on('click', function() {
+        var idtransaksi = $('#inputIDTrx').val();
+        var namapelanggan = $('#inputNamaPeminjam').val();
+        var statuspeminjaman = $('#statuspeminjaman option:selected').val();
+        var durasi = $('#inputDurasi').val();
+        var tglpinjam = $('#tglpinjam').val();
+        // alert(email_user+alamat_user+nama_user+id_user);
+        $.ajax({
+          url: "edit-transaksi-action.php",
+          type: "POST",
+          data: {
+            simpan: "yes",
+            idtransaksi: idtransaksi,
+            namapelanggan: namapelanggan,
+            statuspeminjaman: statuspeminjaman,
+            durasi: durasi,
+            tglpinjam: tglpinjam
+          },
+          success: function(data) {
+            data = jQuery.parseJSON(data);
+            // alert(content);
+            if (data.status == "sukses") {
+              Swal.fire(
+                'Sukses!',
+                'Data berhasil diperbarui',
+                'success'
+              ).then((result) => {
+                if (result.value) {
+                  location.reload();
+                }
+              })
+            } else {
+              if (data.ket == "stok") {
+                Swal.fire(
+                  'Ada barang yang kosong di tanggal tersebut!',
+                  data.barang.nama+' Belum tersedia',
+                  'error'
+                )
+              } else {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Sepertinya anda memasukkan data yang salah.',
+                  // footer: '<a href>Why do I have this issue?</a>'
+                })
+              }
+            }
+          }
+        });
+      });
     });
   </script>
 </body>
