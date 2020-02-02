@@ -135,11 +135,16 @@ if (isset($_SESSION['id_login'])) {
 										while ($pecahCart = $ambilCart->fetch_array()) {
 											$ambil = $koneksi->query("SELECT * FROM tbl_barang WHERE id_barang='" . $pecahCart['id_barang'] . "'") or die("Last error: {$koneksi->error}\n");
 											while ($pecah = $ambil->fetch_array()) {
+												if($pecahCart["jumlah_cart"]!=""){
+													$jumlah_cart = $pecahCart["jumlah_cart"];
+												}else{
+													$jumlah_cart = 0;
+												}
 												echo '<div class="product product-widget">';
 												echo '<div class="header-btns-icon">';
-												echo '<div class="product-thumb"><img src="./img/' . $pecah["foto_barang"] . '" alt="foto"><span class="qty">' . $pecahCart["jumlah_cart"] . '</span></div>';
+												echo '<div class="product-thumb"><img src="./img/' . $pecah["foto_barang"] . '" alt="foto"><span class="qty">' . $jumlah_cart . '</span></div>';
 												echo '</div>';
-												echo '<div class="product-body"><h3 class="product-price">' . rupiah($pecah["harga_barang"]) . '/Hari <span class="qty">' . $pecahCart["jumlah_cart"] . '</span></h3><h2 class="product-name"><a href="#">' . $pecah["nama_barang"] . '</a></h2></div>';
+												echo '<div class="product-body"><h3 class="product-price">' . rupiah($pecah["harga_barang"]) . '/Hari <span class="qty">' . $jumlah_cart . '</span></h3><h2 class="product-name"><a href="#">' . $pecah["nama_barang"] . '</a></h2></div>';
 												echo '<a href="cartUpdate.php?hapuscart=' . $pecah["id_barang"] . '&return_url=' . $current_url . '"><button class="cancel-btn"><a href="cartUpdate.php?hapuscart=' . $pecah["id_barang"] . '&return_url=' . $current_url . '"><i class="fa fa-trash"></a></i></button></a>';
 												echo '</div>';
 											}
