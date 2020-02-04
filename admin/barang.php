@@ -162,31 +162,33 @@ include('./session.php');
                   </tr>
                 </thead>
                 <tbody>
-                <?php
-                $current_url = base64_encode($url = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME']);
-                $ambil = $koneksi->query("SELECT * FROM tbl_barang"); 
-                while ($pecah = $ambil->fetch_assoc()) { ?>
-                  <tr>
-                    <td><input type="checkbox" name="pilih[]" id="pilih"></td>
-                    <td><?php echo $pecah['id_barang'] ?></td>
-                    <td><?php echo $pecah['nama_barang'] ?></td>
-                    <td><?php echo rupiah($pecah['harga_barang']) ?></td>
-                    <td><?php echo $pecah['stok_barang'] ?></td>
-                    <td><?php echo '<a id="my_image" href="../img/' . $pecah['foto_barang'] . '" >Foto</a>' ?></td>
-                    <td class="d-inline-block text-truncate">
-                          <a class="btn btn-info btn-sm" href="edit-barang.php?id=<?php echo $pecah['id_barang'] ?>">
-                              <i class="fas fa-pencil-alt">
-                              </i>
-                              Edit
-                          </a>
-                          <a class="btn btn-danger btn-sm" href="./deleted.php?utm_source=barang&id_barang=<?php echo $pecah['id_barang'] ?>&return=<?php echo $current_url ?>">
-                              <i class="fas fa-trash">
-                              </i>
-                              Delete
-                          </a>
-                    </td>
-                  </tr>
-                <?php } ?>
+                  <?php
+                  $current_url = base64_encode($url = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME']);
+                  $ambil = $koneksi->query("SELECT * FROM tbl_barang");
+                  while ($pecah = $ambil->fetch_assoc()) {
+                    $foto_barang = explode(',', $pecah['foto_barang']);
+                  ?>
+                    <tr>
+                      <td><input type="checkbox" name="pilih[]" id="pilih"></td>
+                      <td><?php echo $pecah['id_barang'] ?></td>
+                      <td><?php echo $pecah['nama_barang'] ?></td>
+                      <td><?php echo rupiah($pecah['harga_barang']) ?></td>
+                      <td><?php echo $pecah['stok_barang'] ?></td>
+                      <td><?php echo '<a id="my_image" href="../img/' . $foto_barang[0] . '" >Foto</a>' ?></td>
+                      <td class="d-inline-block text-truncate">
+                        <a class="btn btn-info btn-sm" href="edit-barang.php?id=<?php echo $pecah['id_barang'] ?>">
+                          <i class="fas fa-pencil-alt">
+                          </i>
+                          Edit
+                        </a>
+                        <a class="btn btn-danger btn-sm" href="./deleted.php?utm_source=barang&id_barang=<?php echo $pecah['id_barang'] ?>&return=<?php echo $current_url ?>">
+                          <i class="fas fa-trash">
+                          </i>
+                          Delete
+                        </a>
+                      </td>
+                    </tr>
+                  <?php } ?>
                 </tbody>
                 <tfoot>
                   <tr>
