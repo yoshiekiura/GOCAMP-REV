@@ -184,12 +184,15 @@ include('./session.php');
                   <label for="customFile">Upload Foto</label>
 
                   <div class="custom-file">
-                    <input type="file" id="fotoBarang" class="custom-file-input" name="fotoBarang" multiple>
+                    <input type="file" id="fotoBarang" class="custom-file-input" name="fotoBarang[]" accept="image/*" multiple>
                     <label class="custom-file-label d-inline-block text-truncate" for="customFile">Upload Foto</label>
                   </div>
                 </div>
               </div>
-
+              <div class="col-12 mb-2">
+                <a href="#" class="btn btn-secondary">Batal</a>
+                <input type="submit" value="Simpan" name="submit" class="btn btn-success float-right">
+              </div>
               <!-- /.card-body -->
           </div>
           <!-- /.card -->
@@ -229,16 +232,17 @@ include('./session.php');
               </div>
             </div>
             <!-- /.card-body -->
+
           </div>
           <!-- /.card -->
         </div>
       </div>
       <div id="message">
         <div class="row">
-          <div class="col-12">
+          <!-- <div class="col-12">
             <a href="#" class="btn btn-secondary">Cancel</a>
             <input type="submit" value="Save Changes" name="submit" class="btn btn-success float-right">
-          </div>
+          </div> -->
           </form>
         </div>
     </section>
