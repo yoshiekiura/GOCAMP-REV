@@ -32,6 +32,9 @@
 	<!-- Custom stlylesheet -->
 	<link type="text/css" rel="stylesheet" href="css/style.css" />
 
+	<!-- SweetAlert2 -->
+	<link rel="stylesheet" href="./admin/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -125,19 +128,25 @@
 									$subTotal = 0;
 									if (isset($_SESSION['cart'])) {
 										foreach ($_SESSION['cart'] as $id_barang => $jumlah) {
+											$ambilBarang = $koneksi->query("SELECT * FROM tbl_barang WHERE id_barang='" . $id_barang . "' AND '" . $jumlah . "'>stok_barang") or die("Last error1: {$koneksi->error}\n");
+											$hitungBarang = mysqli_num_rows($ambilBarang);
 											$ambil = $koneksi->query("SELECT * FROM tbl_barang WHERE id_barang='" . $id_barang . "'") or die("Last error: {$koneksi->error}\n");
 											$pecah = $ambil->fetch_array();
+											$foto_barang = explode(',', $pecah['foto_barang']);
 											$totalBarang = $totalBarang + $jumlah;
 											$totalHarga = $pecah['harga_barang'] * $jumlah;
 											$subTotal = $subTotal + $totalHarga;
 											echo '<tr>';
-											echo '<td class="thumb"><img src="./img/' . $pecah['foto_barang'] . '" alt=""></td>';
+											echo '<td class="thumb"><img src="./img/' . $foto_barang[0] . '" alt=""></td>';
 											echo '<td class="details">';
 											echo 	'<a href="#">' . $pecah['nama_barang'] . '</a>';
+											if ($hitungBarang > 0) {
+												echo 	'<p>Stok barang tidak cukup, hanya tersedia ' . $pecah['stok_barang'] . '</p>';
+											}
 											echo '</td>';
 											echo '<td class="price text-center" id="hargabarang-' . $id_barang . '" value="' . $pecah['harga_barang'] . '"><strong>' . rupiah($pecah['harga_barang']) . '</strong></td>';
-											echo '<td class="qty text-center"><input class="input" type="number" id="qty-' . $id_barang . '" onkeyup="update(this)" name="' . $pecah['id_barang'] . '" value="' . $jumlah . '" maxlength="2"></td>';
-											echo '<td class="total text-center" ><strong class="primary-color" value="'.$totalHarga.'" id="showqty-' . $id_barang . '">' . rupiah($totalHarga) . '</strong></td>';
+											echo '<td class="qty text-center"><input class="input" type="number" id="qty-' . $id_barang . '" oninput="update(this)" name="' . $pecah['id_barang'] . '" value="' . $jumlah . '" max="' . $pecah['stok_barang'] . '"></td>';
+											echo '<td class="total text-center" ><strong class="primary-color" value="' . $totalHarga . '" id="showqty-' . $id_barang . '">' . rupiah($totalHarga) . '</strong></td>';
 											echo '<td class="text-center"><a href="cartUpdate.php?hapuscart=' . $id_barang . '&return_url=' . $current_url . '"><i class="fa fa-close fa-lg"></i></a></td>';
 											echo '</tr>';
 										}
@@ -146,22 +155,27 @@
 										$rowcountCart = mysqli_num_rows($ambilCart);
 										if ($rowcountCart > 0) {
 											while ($pecahCart = $ambilCart->fetch_array()) {
+												$ambilBarang = $koneksi->query("SELECT * FROM tbl_barang WHERE id_barang='" . $pecahCart['id_barang'] . "' AND '" . $pecahCart['jumlah_cart'] . "'>stok_barang") or die("Last error1: {$koneksi->error}\n");
+												$hitungBarang = mysqli_num_rows($ambilBarang);
 												$ambil = $koneksi->query("SELECT * FROM tbl_barang WHERE id_barang='" . $pecahCart['id_barang'] . "'") or die("Last error: {$koneksi->error}\n");
-												while ($pecah = $ambil->fetch_array()) {
-													$totalBarang = $totalBarang + $pecahCart["jumlah_cart"];
-													$totalHarga = $pecah['harga_barang'] * $pecahCart["jumlah_cart"];
-													$subTotal = $subTotal + $totalHarga;
-													echo '<tr>';
-													echo '<td class="thumb"><img src="./img/' . $pecah['foto_barang'] . '" alt=""></td>';
-													echo '<td class="details">';
-													echo 	'<a href="#">' . $pecah['nama_barang'] . '</a>';
-													echo '</td>';
-													echo '<td class="price text-center" id="hargabarang-' . $pecahCart["id_barang"] . '" value="' . $pecah['harga_barang'] . '"><strong>' . rupiah($pecah['harga_barang']) . '</strong></td>';
-													echo '<td class="qty text-center"><input class="input" id="qty-' . $pecahCart["id_barang"] . '" onkeyup="update(this)" name="' . $pecahCart['id_barang'] . '" type="number" value="' . $pecahCart["jumlah_cart"] . '" maxlength="2"></td>';
-													echo '<td class="total text-center" ><strong class="primary-color" value="'.$totalHarga.'" id="showqty-' . $pecahCart["id_barang"] . '">' . rupiah($totalHarga) . '</strong></td>';
-													echo '<td class="text-center"><a href="cartUpdate.php?hapuscart=' . $pecahCart["id_barang"] . '&return_url=' . $current_url . '"><i class="fa fa-close fa-lg"></i></a></td>';
-													echo '</tr>';
+												$pecah = $ambil->fetch_array();
+												$foto_barang = explode(',', $pecah['foto_barang']);
+												$totalBarang = $totalBarang + $pecahCart["jumlah_cart"];
+												$totalHarga = $pecah['harga_barang'] * $pecahCart["jumlah_cart"];
+												$subTotal = $subTotal + $totalHarga;
+												echo '<tr>';
+												echo '<td class="thumb"><img src="./img/' . $foto_barang[0] . '" alt=""></td>';
+												echo '<td class="details">';
+												echo 	'<a href="#">' . $pecah['nama_barang'] . '</a>';
+												if ($hitungBarang > 0) {
+													echo 	'<p>Stok barang tidak cukup, hanya tersedia ' . $pecah['stok_barang'] . '</p>';
 												}
+												echo '</td>';
+												echo '<td class="price text-center" id="hargabarang-' . $pecahCart["id_barang"] . '" value="' . $pecah['harga_barang'] . '"><strong>' . rupiah($pecah['harga_barang']) . '</strong></td>';
+												echo '<td class="qty text-center"><input class="input" id="qty-' . $pecahCart["id_barang"] . '" oninput="update(this)" name="' . $pecahCart['id_barang'] . '" type="number" value="' . $pecahCart["jumlah_cart"] . '" max="' . $pecah['stok_barang'] . '"></td>';
+												echo '<td class="total text-center" ><strong class="primary-color" value="' . $totalHarga . '" class="eachsubtotal" id="showqty-' . $pecahCart["id_barang"] . '">' . rupiah($totalHarga) . '</strong></td>';
+												echo '<td class="text-center"><a href="cartUpdate.php?hapuscart=' . $pecahCart["id_barang"] . '&return_url=' . $current_url . '"><i class="fa fa-close fa-lg"></i></a></td>';
+												echo '</tr>';
 											}
 										} else {
 											echo '<h2>Tidak ada Barang</h2>';
@@ -175,12 +189,12 @@
 											<input class="input" name="tanggal_pinjam" type="date">
 										</th>
 										<th>SUBTOTAL</th>
-										<th colspan="2" class="sub-total" id="sub-total"><?php echo rupiah($subTotal) ?></th>
+										<th colspan="2" class="sub-total" id="sub-total" name="<?php echo $subTotal ?>"><?php echo rupiah($subTotal) ?></th>
 									</tr>
 									<tr>
 										<th>DURASI PEMINJAMAN</th>
 										<th class="detail-checkout" colspan="2">
-											<input class="input" id="durasipinjam" onkeyup="compute()" name="durasi_pinjam" type="number" maxlength="3">
+											<input class="input" id="durasipinjam" onkeyup="compute();" name="durasi_pinjam" type="number" maxlength="3">
 										</th>
 										<th>PROMO</th>
 										<td colspan="2" id="biayapinjam"></td>
@@ -203,7 +217,7 @@
 											</select>
 										</th>
 										<th>TOTAL</th>
-										<th colspan="2" id="total-harga" class="total"></th>
+										<th colspan="2" id="total-harga" class="total"><?php echo rupiah($subTotal) ?></th>
 									</tr>
 								</tfoot>
 							</table>
@@ -211,6 +225,7 @@
 							<input type="hidden" name="return_url" value="<?php echo $current_url ?>">
 							<div class="pull-right">
 								<button class="primary-btn" name="submit">Pesan Sekarang</button>
+								<!-- <button type="submit" id="simpan" class="btn btn-success float-right">Simpan</button> -->
 							</div>
 						</div>
 
@@ -232,6 +247,7 @@
 	<script src="js/nouislider.min.js"></script>
 	<script src="js/jquery.zoom.min.js"></script>
 	<script src="js/main.js"></script>
+	<script src="./admin/plugins/sweetalert2/sweetalert2.min.js"></script>
 	<script>
 		function compute() {
 			if ($('input[name=durasi_pinjam]').val() != NaN) {
@@ -312,20 +328,13 @@
 			var total = 0;
 			var totals = 0;
 			var subtotal = 0;
+			var a = 0;
+			var b = 0;
 			var id = $(e).attr('name');
 			var hargabarang = parseInt($("#hargabarang-" + id).attr("value"));
-			// console.log(id);
-			// console.log(hargabarang);
-			// var a = parseInt($('input[name=subTotal]').val());
-			// 	var b = parseInt($('input[name=durasi_pinjam]').val());
-			// var showqty = $("#hargabarang-" + id);
-			// var id = $('input[name=' + name + ']').val();
-			// alert(id);
-			// alert(hargabarang);
+			var oldtotals = parseInt($("#showqty-" + id).attr("value"));
 			var jumlahcart = $(e).val();
 			var totals = jumlahcart * hargabarang;
-			
-			// console.log(hargabarang);
 			$.ajax({
 				url: "checkoutAction.php",
 				type: "POST",
@@ -335,24 +344,105 @@
 					jumlahcart: jumlahcart,
 				},
 				success: function(data) {
-					data = jQuery.parseJSON(data);
-					// console.log(data.status);
-					if (data.status == true) {
+					response = jQuery.parseJSON(data);
+					// console.log(response);
+					if (response.status == true) {
 						$("#jumlahcart").focus();
+						$("#showqty-" + id).attr("value", totals);
 						$("#showqty-" + id).text('Rp ' + rupiah(totals));
-						var a = parseInt($('input[name=subTotal]').val());
-						var showqty = parseInt($("#showqty-" + id).attr("value"));
-						subtotal = showqty+a-totals;
-						total = a * b;
-						$('#sub-total').text('Rp ' + rupiah(total));
-						// console.log($('#total-harga').html(total));
-						$('#total-harga').text('Rp ' + rupiah(total));
+						a = parseInt($("#sub-total").attr('name'));
+						// console.log(oldtotals);
+						// console.log(totals);
+						// console.log(a);
+						if (a > oldtotals) {
+							var newtotals = a - oldtotals;
+						} else {
+							var newtotals = oldtotals - a;
+						}
+						// if (a > totals) {
+						// 	var subtotal = a - oldtotals + totals;
+						// } else {
+						// 	var subtotal = totals - oldtotals + a;
+						// }
+						subtotal = a - oldtotals + totals;
+						total = 0;
+						// alert(a +'-'+ oldtotals +'+'+ totals +'='+ subtotal);
+						$("#sub-total").attr('name', subtotal);
+						$("#subTotal").val(subtotal);
+						$('#sub-total').text('Rp ' + rupiah(subtotal));
+						$('#total-harga').text('Rp ' + rupiah(subtotal));
+						var dur = parseInt($('input[name=durasi_pinjam]').val());
+						// alert(dur);
+						if (!isNaN(dur)){
+							$newtotal = dur*subtotal;
+							$('#total-harga').text('Rp ' + rupiah($newtotal));
+						}
+						// location.reload();
 					} else {
-						alert("Sepertinya ada yang salah");
+						if (response.stok <= jumlahcart) {
+							alert("Stok tidak mencukupi, hanya ada " + response.stok + " stok barang");
+						} else {
+							alert("Sepertinya ada yang salah atau stok tidak mencukupi");
+						}
+						location.reload();
 					}
 				}
 			});
 		}
+
+
+
+		$('#simpan').on('click', function() {
+			var return_url = $("input[name='return_url']").val();
+			var tanggal_pinjam = $("input[name='tanggal_pinjam']").val();
+			var durasi_pinjam = $("input[name='durasi_pinjam']").val();
+			var metode_pembayaran = $("input[name='metode_pembayaran']").val();
+			var subTotal = $("input[name='subTotal']").val();
+			// alert(email_user+alamat_user+nama_user+id_user);
+			$.ajax({
+				url: "checkoutAction.php",
+				type: "POST",
+				data: {
+					simpan: "yes",
+					return_url: return_url,
+					tanggal_pinjam: tanggal_pinjam,
+					durasi_pinjam: durasi_pinjam,
+					metode_pembayaran: metode_pembayaran,
+					subTotal: subTotal
+				},
+				dataType: "json",
+				success: function(data) {
+					// data = jQuery.parseJSON(data);
+					// alert(content);
+					if (data.status == "sukses") {
+						Swal.fire(
+							'Sukses!',
+							'Data berhasil diperbarui',
+							'success'
+						).then((result) => {
+							if (result.value) {
+								location.reload();
+							}
+						})
+					} else {
+						if (data.ket == "stok") {
+							Swal.fire(
+								'Ada barang yang kosong di tanggal tersebut!',
+								data.barang.nama + ' Belum tersedia',
+								'error'
+							)
+						} else {
+							Swal.fire({
+								icon: 'error',
+								title: 'Oops...',
+								text: 'Sepertinya anda memasukkan data yang salah.',
+								// footer: '<a href>Why do I have this issue?</a>'
+							})
+						}
+					}
+				}
+			});
+		});
 		// })
 	</script>
 
