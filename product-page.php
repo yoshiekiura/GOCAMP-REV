@@ -111,10 +111,13 @@
 							<?php
 							$id = $_GET['id'];
 							$ambil = $koneksi->query("SELECT * FROM tbl_barang WHERE id_barang='" . $id . "'") or die("Last error: {$koneksi->error}\n");
-							while ($pecah = $ambil->fetch_array()) { ?>
+							$pecah = $ambil->fetch_array();
+							$foto_barang = explode(',', $pecah['foto_barang']);
+							foreach ($foto_barang as $foto) { ?>
 								<div class="product-view">
-									<img src="./img/<?php echo $pecah['foto_barang'] ?>" alt="">
+									<img src="./img/<?php echo $foto ?>" alt="">
 								</div>
+							<?php } ?>
 						</div>
 					</div>
 					<div class="col-md-6">
@@ -142,9 +145,7 @@
 							</div>
 						</div>
 					</div>
-				<?php }
-				?>
-				<!-- /Product Details -->
+					<!-- /Product Details -->
 				</div>
 				<!-- /row -->
 			</div>
