@@ -112,10 +112,12 @@ include('config/session.php');
 								$id = mysqli_real_escape_string($koneksi, $_GET['id']);
 								$ambil = $koneksi->query("SELECT * FROM tbl_detailpeminjaman JOIN tbl_barang ON tbl_detailpeminjaman.id_barang=tbl_barang.id_barang WHERE id_peminjaman='$id'");
 							}
-							while ($pecah = $ambil->fetch_array()) { ?>
+							while ($pecah = $ambil->fetch_array()) {
+								$foto_barang = explode(',', $pecah['foto_barang']);
+							?>
 
 								<tr>
-									<td class="thumb"><img src="./img/<?php echo $pecah['foto_barang'] ?>" alt=""></td>
+									<td class="thumb"><img src="./img/<?php echo $foto_barang[0] ?>" alt=""></td>
 									<td class="details">
 										<a href="#"><?php echo $pecah['nama_barang'] ?></a>
 										<ul>
