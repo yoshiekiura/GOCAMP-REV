@@ -146,12 +146,15 @@
 				$ambiltotal = $koneksi->query("SELECT * FROM tbl_barang") or die("Last error: {$koneksi->error}\n");
 				$total = mysqli_num_rows($ambiltotal);
 				$pages = ceil($total / $halaman);
-				while ($pecah = $ambil->fetch_array()) { ?>
+				while ($pecah = $ambil->fetch_array()) { 
+					$foto_barang = explode(',' , $pecah['foto_barang']);
+					$hitungFoto = count($foto_barang);
+					?>
 					<div class="col-md-3 col-sm-6 col-xs-6">
 						<div class="product product-single">
 							<div class="product-thumb">
 								<a href="product-page.php?id=<?php echo $pecah['id_barang'] ?>"><button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Quick view</button></a>
-								<img src="./img/<?php echo $pecah['foto_barang'] ?>" alt="">
+								<img src="./img/<?php echo $foto_barang[0] ?>" alt="">
 							</div>
 							<div class="product-body">
 								<h3 class="product-price"><?php echo rupiah($pecah['harga_barang']) ?></h3>
